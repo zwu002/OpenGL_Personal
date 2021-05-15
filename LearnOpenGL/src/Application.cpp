@@ -119,6 +119,10 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -154,6 +158,11 @@ int main(void)
         2,3,0
     };
 
+    //Generate and bind vertex array object
+    unsigned int vertexArrayObject;
+    GLCall(glGenVertexArrays(1, &vertexArrayObject));
+    GLCall(glBindVertexArray(vertexArrayObject));
+
     //Generate vertex buffer
     unsigned int vertexBuffer;
     GLCall(glGenBuffers(1, &vertexBuffer));
@@ -185,6 +194,12 @@ int main(void)
     ASSERT(location != -1);
     GLCall(glUniform4f(location, 0.2f, 0.2f, 1.0f, 1.0f));
 
+    // Unbind Everything
+    GLCall(glBindVertexArray(0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    GLCall(glUseProgram(0));
+
     float r = 0.0f;
     float increment = 0.05f;
 
@@ -194,7 +209,15 @@ int main(void)
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
         
+        //Setup shader
+        GLCall(glUseProgram(shader));
         GLCall(glUniform4f(location, r, 0.2f, 1.0f, 1.0f));
+
+        //Setup buffers
+        GLCall(glBindVertexArray(vertexArrayObject));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
+
+        //Draw
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         // Dynamic colour change using uniform 
