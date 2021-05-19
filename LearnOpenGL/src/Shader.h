@@ -2,7 +2,8 @@
 
 #include <string>
 #include <unordered_map>
-#include "Renderer.h"
+
+class Renderer;
 
 struct ShaderProgramSource
 {
