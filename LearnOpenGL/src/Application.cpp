@@ -12,6 +12,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Textures.h"
 
 int main(void)
 {
@@ -49,10 +50,10 @@ int main(void)
     {
         //Set Indices and vertex positions
         float positions[] = {
-            -0.5f, -0.5f,
-             0.5f, -0.5f,
-             0.5f,  0.5f,
-            -0.5f,  0.5f
+            -0.7f, -0.5f, 0.0f, 0.0f,
+             0.7f, -0.5f, 1.0f, 0.0f,
+             0.7f,  0.5f, 1.0f, 1.0f,
+            -0.7f,  0.5f, 0.0f, 1.0f
         };
 
         unsigned int indices[] =
@@ -61,19 +62,28 @@ int main(void)
             2,3,0
         };
 
+        //Setup blending method
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.2f, 0.2f, 1.0f, 1.0f);
 
         //Generate vertex buffer and vertex array
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
         //Generate index buffer
         IndexBuffer ib(indices, 6);
+
+        // Generate Texture and bind to shader
+        Texture texture("res/textures/Texture_meme.png");
+        texture.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         // Unbind Everything
         va.UnBind();
