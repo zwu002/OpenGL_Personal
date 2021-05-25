@@ -14,6 +14,9 @@
 #include "Shader.h"
 #include "Textures.h"
 
+#include "vendors/glm/glm.hpp"
+#include "vendors/glm/gtc/matrix_transform.hpp"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -28,7 +31,7 @@ int main(void)
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(1280, 720, "Output Window", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -50,10 +53,10 @@ int main(void)
     {
         //Set Indices and vertex positions
         float positions[] = {
-            -0.7f, -0.5f, 0.0f, 0.0f,
-             0.7f, -0.5f, 1.0f, 0.0f,
-             0.7f,  0.5f, 1.0f, 1.0f,
-            -0.7f,  0.5f, 0.0f, 1.0f
+            -0.5f, -0.5f, 0.0f, 0.0f,
+             0.5f, -0.5f, 1.0f, 0.0f,
+             0.5f,  0.5f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 1.0f
         };
 
         unsigned int indices[] =
@@ -63,6 +66,7 @@ int main(void)
         };
 
         //Setup blending method
+        GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         Shader shader("res/shaders/Basic.shader");
@@ -80,10 +84,14 @@ int main(void)
         //Generate index buffer
         IndexBuffer ib(indices, 6);
 
+        //Generate projection matrix
+        glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
+
         // Generate Texture and bind to shader
         Texture texture("res/textures/Texture_meme.png");
         texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
+        shader.SetUniformMat4f("u_ModelViewProjectionMatrix", proj);
 
         // Unbind Everything
         va.UnBind();
