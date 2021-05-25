@@ -17,6 +17,9 @@
 #include "vendors/glm/glm.hpp"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 
+float screenWidth;
+float screenHeight;
+
 int main(void)
 {
     GLFWwindow* window;
@@ -29,9 +32,11 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    screenWidth = 1280.0f;
+    screenHeight = 720.0f;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1280, 720, "Output Window", NULL, NULL);
+    window = glfwCreateWindow(screenWidth, screenHeight, "Output Window", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -53,10 +58,10 @@ int main(void)
     {
         //Set Indices and vertex positions
         float positions[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-             0.5f, -0.5f, 1.0f, 0.0f,
-             0.5f,  0.5f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f
+             100.0f, 100.0f, 0.0f, 0.0f,
+             586.0f, 100.0f, 1.0f, 0.0f,
+             586.0f, 360.0f, 1.0f, 1.0f,
+             100.0f, 360.0f, 0.0f, 1.0f
         };
 
         unsigned int indices[] =
@@ -84,8 +89,8 @@ int main(void)
         //Generate index buffer
         IndexBuffer ib(indices, 6);
 
-        //Generate projection matrix
-        glm::mat4 proj = glm::ortho(-4.0f, 4.0f, -3.0f, 3.0f, -1.0f, 1.0f);
+        //Generate projection matrix (orthographic
+        glm::mat4 proj = glm::ortho(0.0f, screenWidth, 0.0f, screenHeight, -1.0f, 1.0f);
 
         // Generate Texture and bind to shader
         Texture texture("res/textures/Texture_meme.png");
