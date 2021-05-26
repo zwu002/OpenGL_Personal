@@ -1,4 +1,7 @@
-#include <GL\glew.h>
+#include <GL/glew.h>
+#include "vendors/imGui/imgui.h"
+#include "vendors/imGui/imgui_impl_glfw.h"
+#include "vendors/imGui/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
 
 #include <iostream>
@@ -17,6 +20,9 @@
 #include "vendors/glm/glm.hpp"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 
+
+#include <stdio.h>
+
 float screenWidth;
 float screenHeight;
 
@@ -28,6 +34,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    const char* glsl_version = "#version 330";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -58,10 +65,10 @@ int main(void)
     {
         //Set Indices and vertex positions
         float positions[] = {
-             100.0f, 100.0f, 0.0f, 0.0f,
-             586.0f, 100.0f, 1.0f, 0.0f,
-             586.0f, 360.0f, 1.0f, 1.0f,
-             100.0f, 360.0f, 0.0f, 1.0f
+             0.0f,   0.0f, 0.0f, 0.0f,
+             486.0f, 0.0f, 1.0f, 0.0f,
+             486.0f, 260.0f, 1.0f, 1.0f,
+             0.0f,   260.0f, 0.0f, 1.0f
         };
 
         unsigned int indices[] =
@@ -91,16 +98,12 @@ int main(void)
 
         //Generate model view projection matrix (orthographic
         glm::mat4 proj = glm::ortho(0.0f, screenWidth, 0.0f, screenHeight, -1.0f, 1.0f); //projection matrix
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(100, 0, 0)); //view matrix (camera
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0)); //model matrix
-
-        glm::mat4 mvp = proj * view * model;
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0)); //view matrix (camera
 
         // Generate Texture and bind to shader
         Texture texture("res/textures/Texture_meme.png");
         texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
-        shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
 
         // Unbind Everything
         va.UnBind();
@@ -109,6 +112,22 @@ int main(void)
         shader.UnBind();
 
         Renderer renderer;
+        
+        // Setup ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui::StyleColorsDark();
+
+        glm::vec3 translation(200, 200, 0);
+
+        // Setup Renderer backends
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init(glsl_version);
+
+        //ImGui test window states
+        bool show_demo_window = true;
+        bool show_another_window = false;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
         float r = 0.0f;
         float increment = 0.05f;
@@ -119,22 +138,30 @@ int main(void)
             /* Render here */
             renderer.Clear();
 
+            //ImGui new frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation); //model matrix
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
-            shader.SetUniform4f("u_Color", r, 0.2f, 1.0f, 1.0f);
-
             renderer.Draw(va, ib, shader);
+            shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
 
-            // Dynamic colour change using uniform 
-            if (r >= 1.0f)
+
             {
-                increment = -0.05f;
-            }
-            else if (r <= 0.0f)
-            {
-                increment = 0.05f;
+                static float f = 0.0f;
+
+                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             }
 
-            r += increment;
+
+            //ImGui rendering
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(window));
@@ -144,6 +171,11 @@ int main(void)
         }
     }
 
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
