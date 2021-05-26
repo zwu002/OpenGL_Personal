@@ -89,14 +89,18 @@ int main(void)
         //Generate index buffer
         IndexBuffer ib(indices, 6);
 
-        //Generate projection matrix (orthographic
-        glm::mat4 proj = glm::ortho(0.0f, screenWidth, 0.0f, screenHeight, -1.0f, 1.0f);
+        //Generate model view projection matrix (orthographic
+        glm::mat4 proj = glm::ortho(0.0f, screenWidth, 0.0f, screenHeight, -1.0f, 1.0f); //projection matrix
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(100, 0, 0)); //view matrix (camera
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0)); //model matrix
+
+        glm::mat4 mvp = proj * view * model;
 
         // Generate Texture and bind to shader
         Texture texture("res/textures/Texture_meme.png");
         texture.Bind();
         shader.SetUniform1i("u_Texture", 0);
-        shader.SetUniformMat4f("u_ModelViewProjectionMatrix", proj);
+        shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
 
         // Unbind Everything
         va.UnBind();
