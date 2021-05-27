@@ -65,10 +65,10 @@ int main(void)
     {
         //Set Indices and vertex positions
         float positions[] = {
-             0.0f,   0.0f, 0.0f, 0.0f,
-             486.0f, 0.0f, 1.0f, 0.0f,
-             486.0f, 260.0f, 1.0f, 1.0f,
-             0.0f,   260.0f, 0.0f, 1.0f
+            -243.0f, -130.0f, 0.0f, 0.0f,
+             243.0f, -130.0f, 1.0f, 0.0f,
+             243.0f,  130.0f, 1.0f, 1.0f,
+            -243.0f,  130.0f, 0.0f, 1.0f
         };
 
         unsigned int indices[] =
@@ -118,7 +118,8 @@ int main(void)
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
 
-        glm::vec3 translation(200, 200, 0);
+        glm::vec3 translationA(0, 0, 0);
+        glm::vec3 translationB(200, 200, 0);
 
         // Setup Renderer backends
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -143,18 +144,29 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation); //model matrix
-            glm::mat4 mvp = proj * view * model;
-
             shader.Bind();
-            renderer.Draw(va, ib, shader);
-            shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
 
+            //render once
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA); //model matrix
+                glm::mat4 mvp = proj * view * model;
+                shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
+                renderer.Draw(va, ib, shader);
+            }
+
+            //render twice, with a different model matrix
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB); //model matrix
+                glm::mat4 mvp = proj * view * model;
+                shader.SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
+                renderer.Draw(va, ib, shader);
+            }
 
             {
                 static float f = 0.0f;
 
-                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+                ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
+                ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             }
 
