@@ -22,7 +22,7 @@
 
 #include "tests/Test.h"
 #include "tests/TestClearColour.h"
-
+#include "tests/TestTexture2D.h"
 
 #include <stdio.h>
 
@@ -42,8 +42,8 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    screenWidth = 1280.0f;
-    screenHeight = 720.0f;
+	screenWidth = 1280.0f;
+	screenHeight = 720.0f;
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(screenWidth, screenHeight, "Output Window", NULL, NULL);
@@ -87,6 +87,7 @@ int main(void)
         currentTest = testMenu;
 
         testMenu->RegisterTest<test::TestClearColour>("Clear Color");
+        testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
 
         test::TestClearColour test;
 
