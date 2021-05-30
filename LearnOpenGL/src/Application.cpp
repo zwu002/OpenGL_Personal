@@ -20,6 +20,7 @@
 #include "vendors/glm/glm.hpp"
 #include "vendors/glm/gtc/matrix_transform.hpp"
 
+#include "tests/Test.h"
 #include "tests/TestClearColour.h"
 
 
@@ -74,12 +75,18 @@ int main(void)
         // Setup ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGui::StyleColorsDark();
 
 
         // Setup Renderer back end
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
+
+        //Load Test
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
+
+        testMenu->RegisterTest<test::TestClearColour>("Clear Color");
 
         test::TestClearColour test;
 
@@ -87,19 +94,30 @@ int main(void)
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
             renderer.Clear();
-
-            test.OnUpdate(0.0f);
-            test.OnRender();
-
 
             //ImGui new frame
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            if (currentTest)
+            {
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+				if (currentTest != testMenu && ImGui::Button("<-"))
+				{
+					delete currentTest;
+					currentTest = testMenu;
+				}
+
+                currentTest->OnImGuiRender();
+                ImGui::End();
+            }
+
             //ImGui rendering
-            test.OnImGuiRender();
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -109,6 +127,12 @@ int main(void)
             /* Poll for and process events */
             GLCall(glfwPollEvents());
         }
+
+		delete currentTest;
+		if (currentTest != testMenu)
+		{
+			delete testMenu;
+		}
     }
 
     // Cleanup
