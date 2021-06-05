@@ -17,15 +17,15 @@ namespace test {
 	{
 		//Set Indices and vertex positions
 		float positions[] = {
-			 200.0f,  280.0f, 0.0f, 0.0f,
-			 250.0f,  280.0f, 1.0f, 0.0f,
-			 250.0f,  330.0f, 1.0f, 1.0f,
-			 200.0f,  330.0f, 0.0f, 1.0f,
+			 200.0f, 280.0f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f, 1.0f,
+			 250.0f, 280.0f, 1.0f, 0.0f, 0.2f, 0.2f, 1.0f, 1.0f,
+			 250.0f, 330.0f, 1.0f, 1.0f, 0.2f, 0.2f, 1.0f, 1.0f,
+			 200.0f, 330.0f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f, 1.0f,
 
-			 400.0f,  280.0f, 0.0f, 0.0f,
-			 450.0f,  280.0f, 1.0f, 0.0f,
-			 450.0f,  330.0f, 1.0f, 1.0f,
-			 400.0f,  330.0f, 0.0f, 1.0f
+			 400.0f, 280.0f, 0.0f, 0.0f, 1.0f, 0.8f, 0.2f, 1.0f,
+			 450.0f, 280.0f, 1.0f, 0.0f, 1.0f, 0.8f, 0.2f, 1.0f,
+			 450.0f, 330.0f, 1.0f, 1.0f, 1.0f, 0.8f, 0.2f, 1.0f,
+			 400.0f, 330.0f, 0.0f, 1.0f, 1.0f, 0.8f, 0.2f, 1.0f
 		};
 
 		unsigned int indices[] =
@@ -42,11 +42,12 @@ namespace test {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		m_VertexArray = std::make_unique<VertexArray>();
-		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 4 * sizeof(float));
+		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 8 * sizeof(float));
 
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
 		layout.Push<float>(2);
+		layout.Push<float>(4);
 
 		m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
