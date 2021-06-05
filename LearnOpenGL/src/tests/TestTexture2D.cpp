@@ -15,8 +15,15 @@ namespace test {
 
 	TestTexture2D::TestTexture2D() : m_Proj(glm::ortho(0.0f, 1280.f, 0.0f, 720.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))), m_TranslationA(0, 0, 0)
 	{
-		//Set Indices and vertex positions
-		float positions[] = {
+		struct Vertex
+		{
+			float Position[2];
+			float TexCoords[2];
+			float TexID;
+		};
+
+
+		float vertices[] = {
 			-243.0f, -130.0f, 0.0f, 0.0f, 0.0f,
 			 243.0f, -130.0f, 1.0f, 0.0f, 0.0f,
 			 243.0f,  130.0f, 1.0f, 1.0f, 0.0f,
@@ -41,8 +48,10 @@ namespace test {
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+		m_VertexBuffer = std::make_unique<VertexBuffer>(vertices, sizeof(vertices), true);
 		m_VertexArray = std::make_unique<VertexArray>();
-		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 5 * sizeof(float));
+
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices));
 
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
