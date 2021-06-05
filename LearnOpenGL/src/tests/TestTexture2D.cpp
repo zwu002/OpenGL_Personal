@@ -17,15 +17,15 @@ namespace test {
 	{
 		//Set Indices and vertex positions
 		float positions[] = {
-			-243.0f, -130.0f, 0.0f, 0.0f,
-			 243.0f, -130.0f, 1.0f, 0.0f,
-			 243.0f,  130.0f, 1.0f, 1.0f,
-			-243.0f,  130.0f, 0.0f, 1.0f,
+			-243.0f, -130.0f, 0.0f, 0.0f, 0.0f,
+			 243.0f, -130.0f, 1.0f, 0.0f, 0.0f,
+			 243.0f,  130.0f, 1.0f, 1.0f, 0.0f,
+			-243.0f,  130.0f, 0.0f, 1.0f, 0.0f,
 
-			 0.0f, 0.0f, 0.0f, 0.0f,
-			 486.0f, 0.0f, 1.0f, 0.0f,
-			 486.0f, 260.0f, 1.0f, 1.0f,
-			 0.0f, 260.0f, 0.0f, 1.0f
+			 300.0f, 0.0f,   0.0f, 0.0f, 1.0f,
+			 500.0f, 0.0f,   1.0f, 0.0f, 1.0f,
+			 500.0f, 200.0f, 1.0f, 1.0f, 1.0f,
+			 300.0f, 200.0f, 0.0f, 1.0f, 1.0f
 		};
 
 		unsigned int indices[] =
@@ -42,11 +42,12 @@ namespace test {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		m_VertexArray = std::make_unique<VertexArray>();
-		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 4 * sizeof(float));
+		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 5 * sizeof(float));
 
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
 		layout.Push<float>(2);
+		layout.Push<float>(1);
 
 		m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
@@ -54,10 +55,8 @@ namespace test {
 		// Generate Texture and bind to shader
 		m_Shader = std::make_unique<Shader>("res/shaders/BasicTexture.shader");
 		m_Shader->Bind();
-		m_Shader->SetUniform4f("u_Color", 0.2f, 0.2f, 1.0f, 1.0f);
-		m_Textuire = std::make_unique<Texture>("res/textures/Texture_meme.png");
-		m_Shader->SetUniform1i("u_Texture", 0);
-
+		m_Texture_A = std::make_unique<Texture>("res/textures/Texture_meme.png");
+		m_Texture_B = std::make_unique<Texture>("res/textures/potato.png");
 	}
 
 	TestTexture2D::~TestTexture2D()
@@ -76,7 +75,8 @@ namespace test {
 
 		Renderer renderer;
 
-		m_Textuire->Bind();
+		m_Texture_A->Bind(0);
+		m_Texture_B->Bind(1);
 
 		//render once
 		{
@@ -84,6 +84,11 @@ namespace test {
 			glm::mat4 mvp = m_Proj * m_View * model;
 			m_Shader->Bind();
 			m_Shader->SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
+
+			auto loc = glGetUniformLocation(m_Shader->GetRendererID(), "u_Textures");
+			int samplers[2] = { 0, 1 };
+			glUniform1iv(loc, 2, samplers);
+
 			renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 		}
 
@@ -94,6 +99,4 @@ namespace test {
 		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
-
-
 }

@@ -107,6 +107,12 @@ void Shader::UnBind() const
     GLCall(glUseProgram(0));
 }
 
+unsigned int Shader::GetRendererID() const
+{
+    return m_RendererID;
+}
+
+
 void Shader::SetUniform1i(const std::string& name, int value)
 {
     GLCall(glUniform1i(GetUniformLocation(name), value));

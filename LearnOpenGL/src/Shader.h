@@ -27,6 +27,7 @@ public:
 
 	void Bind() const;
 	void UnBind() const;
+	unsigned int GetRendererID() const;
 
 	//Set uniforms
 	void SetUniform1i(const std::string& name, int value);
