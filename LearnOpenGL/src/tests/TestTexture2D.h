@@ -28,7 +28,6 @@ namespace test {
 		std::unique_ptr<Texture> m_Textuire;
 
 		glm::vec3 m_TranslationA;
-		glm::vec3 m_TranslationB;
 
 		glm::mat4 m_Proj, m_View;
 	};

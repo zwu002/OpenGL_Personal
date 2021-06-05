@@ -13,20 +13,28 @@
 namespace test {
 
 
-	TestTexture2D::TestTexture2D() : m_Proj(glm::ortho(0.0f, 1280.f, 0.0f, 720.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))), m_TranslationA(0, 0, 0), m_TranslationB(200, 200, 0)
+	TestTexture2D::TestTexture2D() : m_Proj(glm::ortho(0.0f, 1280.f, 0.0f, 720.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))), m_TranslationA(0, 0, 0)
 	{
 		//Set Indices and vertex positions
 		float positions[] = {
 			-243.0f, -130.0f, 0.0f, 0.0f,
 			 243.0f, -130.0f, 1.0f, 0.0f,
 			 243.0f,  130.0f, 1.0f, 1.0f,
-			-243.0f,  130.0f, 0.0f, 1.0f
+			-243.0f,  130.0f, 0.0f, 1.0f,
+
+			 0.0f, 0.0f, 0.0f, 0.0f,
+			 486.0f, 0.0f, 1.0f, 0.0f,
+			 486.0f, 260.0f, 1.0f, 1.0f,
+			 0.0f, 260.0f, 0.0f, 1.0f
 		};
 
 		unsigned int indices[] =
 		{
 			0,1,2,
-			2,3,0
+			2,3,0,
+
+			4,5,6,
+			6,7,4
 		};
 
 		//Setup blending method
@@ -34,14 +42,14 @@ namespace test {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 		m_VertexArray = std::make_unique<VertexArray>();
-		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 4 * sizeof(float));
 
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
 		layout.Push<float>(2);
 
 		m_VertexArray->AddBuffer(*m_VertexBuffer, layout);
-		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
+		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
 
 		// Generate Texture and bind to shader
 		m_Shader = std::make_unique<Shader>("res/shaders/Basic.shader");
@@ -79,21 +87,11 @@ namespace test {
 			renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 		}
 
-		//render twice, with a different model matrix
-		{
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), m_TranslationB); //model matrix
-			glm::mat4 mvp = m_Proj * m_View * model;
-			m_Shader->Bind();
-			m_Shader->SetUniformMat4f("u_ModelViewProjectionMatrix", mvp);
-			renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-		}
-
 	}
 
 	void TestTexture2D::OnImGuiRender()
 	{
 		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
-		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 960.0f);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 
