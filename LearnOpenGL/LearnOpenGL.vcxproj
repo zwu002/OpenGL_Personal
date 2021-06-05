@@ -162,6 +162,7 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\tests\Test.cpp" />
     <ClCompile Include="src\tests\TestClearColour.cpp" />
+    <ClCompile Include="src\tests\TestColour2D.cpp" />
     <ClCompile Include="src\tests\TestTexture2D.cpp" />
     <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\vendors\glm\detail\glm.cpp" />
@@ -177,7 +178,8 @@
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\BasicColour.shader" />
+    <None Include="res\shaders\BasicTexture.shader" />
     <None Include="src\vendors\glm\detail\func_common.inl" />
     <None Include="src\vendors\glm\detail\func_common_simd.inl" />
     <None Include="src\vendors\glm\detail\func_exponential.inl" />
@@ -321,6 +323,7 @@
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\tests\Test.h" />
     <ClInclude Include="src\tests\TestClearColour.h" />
+    <ClInclude Include="src\tests\TestColour2D.h" />
     <ClInclude Include="src\tests\TestTexture2D.h" />
     <ClInclude Include="src\Textures.h" />
     <ClInclude Include="src\vendors\glm\common.hpp" />

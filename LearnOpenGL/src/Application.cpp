@@ -23,6 +23,7 @@
 #include "tests/Test.h"
 #include "tests/TestClearColour.h"
 #include "tests/TestTexture2D.h"
+#include "tests/TestColour2D.h"
 
 #include <stdio.h>
 
@@ -88,6 +89,7 @@ int main(void)
 
         testMenu->RegisterTest<test::TestClearColour>("Clear Color");
         testMenu->RegisterTest<test::TestTexture2D>("Texture 2D");
+        testMenu->RegisterTest<test::TestColour2D>("Colour 2D");
 
         test::TestClearColour test;
 

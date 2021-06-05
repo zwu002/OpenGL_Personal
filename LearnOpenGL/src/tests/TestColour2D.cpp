@@ -1,4 +1,4 @@
-#include "TestTexture2D.h"
+#include "TestColour2D.h"
 
 #include "Renderer.h"
 #include "imgui/imgui.h"
@@ -13,19 +13,19 @@
 namespace test {
 
 
-	TestTexture2D::TestTexture2D() : m_Proj(glm::ortho(0.0f, 1280.f, 0.0f, 720.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))), m_TranslationA(0, 0, 0)
+	TestColour2D::TestColour2D() : m_Proj(glm::ortho(0.0f, 1280.f, 0.0f, 720.0f, -1.0f, 1.0f)), m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))), m_TranslationA(0, 0, 0)
 	{
 		//Set Indices and vertex positions
 		float positions[] = {
-			-243.0f, -130.0f, 0.0f, 0.0f,
-			 243.0f, -130.0f, 1.0f, 0.0f,
-			 243.0f,  130.0f, 1.0f, 1.0f,
-			-243.0f,  130.0f, 0.0f, 1.0f,
+			 200.0f,  280.0f, 0.0f, 0.0f,
+			 250.0f,  280.0f, 1.0f, 0.0f,
+			 250.0f,  330.0f, 1.0f, 1.0f,
+			 200.0f,  330.0f, 0.0f, 1.0f,
 
-			 0.0f, 0.0f, 0.0f, 0.0f,
-			 486.0f, 0.0f, 1.0f, 0.0f,
-			 486.0f, 260.0f, 1.0f, 1.0f,
-			 0.0f, 260.0f, 0.0f, 1.0f
+			 400.0f,  280.0f, 0.0f, 0.0f,
+			 450.0f,  280.0f, 1.0f, 0.0f,
+			 450.0f,  330.0f, 1.0f, 1.0f,
+			 400.0f,  330.0f, 0.0f, 1.0f
 		};
 
 		unsigned int indices[] =
@@ -52,31 +52,27 @@ namespace test {
 		m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
 
 		// Generate Texture and bind to shader
-		m_Shader = std::make_unique<Shader>("res/shaders/BasicTexture.shader");
+		m_Shader = std::make_unique<Shader>("res/shaders/BasicColour.shader");
 		m_Shader->Bind();
 		m_Shader->SetUniform4f("u_Color", 0.2f, 0.2f, 1.0f, 1.0f);
-		m_Textuire = std::make_unique<Texture>("res/textures/Texture_meme.png");
-		m_Shader->SetUniform1i("u_Texture", 0);
 
 	}
 
-	TestTexture2D::~TestTexture2D()
+	TestColour2D::~TestColour2D()
 	{
 
 	}
 
-	void TestTexture2D::OnUpdate(float deltaTime)
+	void TestColour2D::OnUpdate(float deltaTime)
 	{
 
 	}
 
-	void TestTexture2D::OnRender()
+	void TestColour2D::OnRender()
 	{
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		Renderer renderer;
-
-		m_Textuire->Bind();
 
 		//render once
 		{
@@ -89,7 +85,7 @@ namespace test {
 
 	}
 
-	void TestTexture2D::OnImGuiRender()
+	void TestColour2D::OnImGuiRender()
 	{
 		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
